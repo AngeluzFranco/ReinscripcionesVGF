@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reinscripciones VGF</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      .table-bordered-blue {
+        border: 2px solid #0d6efd;
+      }
+      .table-bordered-blue th,
+      .table-bordered-blue td {
+        border: 1px solid #0d6efd;
+      }
+      .table-bordered-blue th:first-child,
+      .table-bordered-blue td:first-child {
+        border-left: none;
+      }
+      .table-bordered-blue th:last-child,
+      .table-bordered-blue td:last-child {
+        border-right: none;
+      }
+      .non-editable {
+        background-color: #f8f9fa;
+        color: #6c757d;
+      }
+      .section-title {
+        color: #0d6efd;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      .responsive-table-container {
+        overflow-x: auto;
+      }
+      .card {
+        border-radius: 10px;
+      }
+      @media (max-width: 768px) {
+        .mobile-stack {
+          display: flex;
+          flex-direction: column;
+        }
+        .mobile-stack .table-responsive {
+          margin-bottom: 20px;
+        }
+        .form-control,
+        .form-select {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body class="container py-4">
+    <h2 class="text-center mb-4">Formulario de Reinscripción</h2>
+
+    <!-- Buscar por número de control -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-8">
+            <label for="numero_control" class="form-label"
+              >Número de Control</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="numero_control"
+              required
+            />
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="buscarAlumno()">
+              Buscar Alumno
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form
+      id="formulario_reinscripcion"
+      onsubmit="event.preventDefault(); confirmarReinscripcion();"
+    >
+      <div class="row mobile-stack">
+        <div class="col-lg-6">
+          <!-- Datos personales del alumno -->
+          <h4 class="section-title">Datos Personales</h4>
+          <div class="responsive-table-container">
+            <table class="table table-bordered-blue mb-4 w-100">
+              <tbody>
+                <tr>
+                  <th class="col-md-4">Nombre:</th>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control non-editable"
+                      id="nombres"
+                      disabled
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Apellido Paterno:</th>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control non-editable"
+                      id="apellido_paterno"
+                      disabled
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Apellido Materno:</th>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control non-editable"
+                      id="apellido_materno"
+                      disabled
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <!-- Datos del último semestre cursado -->
+          <h4 class="section-title">Último Semestre Cursado</h4>
+          <div class="responsive-table-container">
+            <table class="table table-bordered-blue mb-4 w-100">
+              <tbody>
+                <tr>
+                  <th class="col-md-4">Semestre Anterior:</th>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control non-editable"
+                      id="semestre_anterior"
+                      disabled
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Grupo Anterior:</th>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control non-editable"
+                      id="grupo_anterior"
+                      disabled
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>Fecha de Solicitud:</th>
+                  <td>
+                    <input
+                      type="date"
+                      class="form-control non-editable"
+                      id="fecha_solicitud"
+                      disabled
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos de reinscripción -->
+      <h4 class="section-title">Datos de Solicitud de Reinscripción</h4>
+      <div class="responsive-table-container">
+        <table class="table table-bordered-blue mb-4">
+          <tbody>
+            <tr>
+              <th class="col-md-4">Semestre al que se inscribe:</th>
+              <td>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="semestre_inscripcion"
+                  required
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>Especialidad:</th>
+              <td>
+                <select class="form-select" id="especialidad" required>
+                  <option value="">Selecciona una especialidad</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Taller:</th>
+              <td>
+                <select class="form-select" id="taller" required>
+                  <option value="">Selecciona un taller</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success btn-lg">
+          Reinscribir Alumno
+        </button>
+      </div>
+    </form>
+
+    <script>
+      const url = "http://192.168.0.109:8000/api/" ;
+      let alumnoData = null;
+
+      // Configurar fecha actual al cargar la página
+      document.addEventListener("DOMContentLoaded", function () {
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0];
+        document.getElementById("fecha_solicitud").value = formattedDate;
+      });
+
+      async function buscarAlumno() {
+        const numeroControl = document.getElementById("numero_control").value;
+
+        if (!numeroControl) {
+          Swal.fire(
+            "Advertencia",
+            "Por favor ingresa un número de control",
+            "warning"
+          );
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${url}buscar-alumno/${numeroControl}/`
+          );
+          if (!response.ok) throw new Error();
+
+          const data = await response.json();
+          alumnoData = data;
+
+          // Rellenar los campos
+          document.getElementById("nombres").value = data.nombres || "";
+          document.getElementById("apellido_paterno").value =
+            data.apellido_paterno || "";
+          document.getElementById("apellido_materno").value =
+            data.apellido_materno || "";
+          document.getElementById("grupo_anterior").value =
+            data.grupo_anterior || "";
+          document.getElementById("semestre_anterior").value =
+            data.semestre_anterior || "";
+
+          // Autocompletar semestre de inscripción (anterior + 1)
+          if (data.semestre_anterior) {
+            document.getElementById("semestre_inscripcion").value =
+              parseInt(data.semestre_anterior) + 1;
+          }
+
+          await cargarEspecialidades();
+          await cargarTalleres();
+
+          Swal.fire("Éxito", "Alumno encontrado", "success");
+        } catch {
+          alumnoData = null;
+          Swal.fire(
+            "Error",
+            "El alumno no existe o no está registrado.",
+            "error"
+          );
+        }
+      }
+
+      async function cargarEspecialidades() {
+        try {
+          const response = await fetch(
+            `${url}especialidades-disponibles/`
+          );
+          const data = await response.json();
+          const select = document.getElementById("especialidad");
+
+          select.innerHTML =
+            '<option value="">Selecciona una especialidad</option>';
+          data.forEach((e) => {
+            const option = document.createElement("option");
+            option.value = e.nombre;
+            option.textContent = e.nombre;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error al cargar especialidades:", error);
+        }
+      }
+
+      async function cargarTalleres() {
+        try {
+          const response = await fetch(
+            `${url}talleres-disponibles/`
+          );
+          const data = await response.json();
+          const select = document.getElementById("taller");
+
+          select.innerHTML = '<option value="">Selecciona un taller</option>';
+          data.forEach((t) => {
+            const option = document.createElement("option");
+            option.value = t.nombre;
+            option.textContent = t.nombre;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error al cargar talleres:", error);
+        }
+      }
+
+      function limpiarFormulario() {
+        // Limpiar campos de búsqueda
+        document.getElementById("numero_control").value = "";
+
+        // Limpiar campos de datos personales
+        document.getElementById("nombres").value = "";
+        document.getElementById("apellido_paterno").value = "";
+        document.getElementById("apellido_materno").value = "";
+
+        // Limpiar datos de último semestre
+        document.getElementById("grupo_anterior").value = "";
+        document.getElementById("semestre_anterior").value = "";
+
+        // Limpiar datos de reinscripción
+        document.getElementById("semestre_inscripcion").value = "";
+        document.getElementById("especialidad").selectedIndex = 0;
+        document.getElementById("taller").selectedIndex = 0;
+
+        // Restablecer fecha actual
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0];
+        document.getElementById("fecha_solicitud").value = formattedDate;
+
+        // Resetear datos del alumno
+        alumnoData = null;
+      }
+
+      function confirmarReinscripcion() {
+        if (!alumnoData) {
+          Swal.fire("Error", "Primero busca un alumno válido.", "error");
+          return;
+        }
+
+        // Validaciones básicas antes de mostrar la confirmación
+        const semestreInscripcion = document.getElementById(
+          "semestre_inscripcion"
+        ).value;
+        const especialidad = document.getElementById("especialidad").value;
+        const taller = document.getElementById("taller").value;
+
+        if (!semestreInscripcion) {
+          Swal.fire("Error", "Ingresa un semestre válido.", "warning");
+          return;
+        }
+
+        if (!especialidad) {
+          Swal.fire("Error", "Selecciona una especialidad.", "warning");
+          return;
+        }
+
+        if (!taller) {
+          Swal.fire("Error", "Selecciona un taller.", "warning");
+          return;
+        }
+
+        // Mostrar diálogo de confirmación
+        Swal.fire({
+          title: "¿Confirmar reinscripción?",
+          text: "¿Estás seguro de que deseas reinscribir a este alumno?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, reinscribir",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            reinscribirAlumno();
+          }
+        });
+      }
+
+      async function reinscribirAlumno() {
+        const semestreAnterior =
+          parseInt(document.getElementById("semestre_anterior").value) || 0;
+        const semestreInscripcion = parseInt(
+          document.getElementById("semestre_inscripcion").value
+        );
+        const especialidad = document.getElementById("especialidad").value;
+        const taller = document.getElementById("taller").value;
+        const fecha = document.getElementById("fecha_solicitud").value;
+
+        // Validación adicional
+        if (semestreInscripcion <= semestreAnterior) {
+          Swal.fire(
+            "Error",
+            "El semestre al que se inscribe debe ser mayor al anterior.",
+            "warning"
+          );
+          return;
+        }
+
+        // Datos finales a enviar
+        const datos = {
+          numero_control: alumnoData.numero_control,
+          nombres: alumnoData.nombres,
+          apellido_paterno: alumnoData.apellido_paterno,
+          apellido_materno: alumnoData.apellido_materno,
+          grupo_anterior: alumnoData.grupo_anterior,
+          semestre_anterior: semestreAnterior,
+          semestre_inscripcion: semestreInscripcion,
+          nombre_especialidad: especialidad,
+          nombre_taller: taller,
+          fecha_solicitud: fecha,
+        };
+
+        try {
+          // Primero registrar la inscripción
+          const response = await fetch(
+            `${url}registrar-inscripcion/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(datos),
+            }
+          );
+
+          const result = await response.json();
+
+          if (!response.ok || !result.id_inscripcion) {
+            throw new Error(
+              result.error || "No se recibió el ID de inscripción"
+            );
+          }
+
+          // Luego generar el PDF con los datos específicos
+          const pdfResponse = await fetch(
+            `${url}solicitud-pdf/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(datos),
+            }
+          );
+
+          if (!pdfResponse.ok) {
+            throw new Error("Error al generar el PDF");
+          }
+
+          // Crear el blob del PDF y descargarlo
+          const pdfBlob = await pdfResponse.blob();
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+
+          const downloadLink = document.createElement("a");
+          downloadLink.href = pdfUrl;
+          downloadLink.download = `solicitud_reinscripcion_${datos.numero_control}.pdf`;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          // Liberar el objeto URL
+          setTimeout(() => URL.revokeObjectURL(pdfUrl), 100);
+
+          Swal.fire(
+            "¡Éxito!",
+            "Inscripción completada. El comprobante se está descargando...",
+            "success"
+          );
+
+          // Limpiar el formulario después de reinscribir
+          limpiarFormulario();
+        } catch (error) {
+          console.error("Error completo:", error);
+          Swal.fire(
+            "Error",
+            error.message || "Ocurrió un error al generar el comprobante",
+            "error"
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
